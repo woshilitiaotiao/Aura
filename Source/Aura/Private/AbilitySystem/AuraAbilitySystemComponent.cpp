@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
+#include "AuraGameplayTags.h"
+
 
 // Sets default values for this component's properties
 UAuraAbilitySystemComponent::UAuraAbilitySystemComponent()
@@ -14,6 +16,11 @@ UAuraAbilitySystemComponent::UAuraAbilitySystemComponent()
 	// ...
 }
 
+void UAuraAbilitySystemComponent::AbilityActorInfoSet()
+{
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::EffectApplied);
+}
+
 
 // Called when the game starts
 void UAuraAbilitySystemComponent::BeginPlay()
@@ -22,6 +29,15 @@ void UAuraAbilitySystemComponent::BeginPlay()
 
 	// ...
 	
+}
+
+void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent,
+	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
+{
+	FGameplayTagContainer TagContainer;
+	EffectSpec.GetAllAssetTags(TagContainer);
+
+	EffectAssetTags.Broadcast(TagContainer);
 }
 
 
