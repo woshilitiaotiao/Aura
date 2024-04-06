@@ -1,12 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AbilitySystem/ModMagCalc/MMC_MaxMan.h"
-
+#include "AbilitySystem\ModMagCalc\MMC_MaxMana.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Interaction/CombatInterface.h"
 
-UMMC_MaxMan::UMMC_MaxMan()
+UMMC_MaxMana::UMMC_MaxMana()
 {
 	IntelligenceDef.AttributeToCapture = UAuraAttributeSet::GetVigorAttribute();
 	IntelligenceDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
@@ -15,7 +14,7 @@ UMMC_MaxMan::UMMC_MaxMan()
 	RelevantAttributesToCapture.Add(IntelligenceDef);
 }
 
-float UMMC_MaxMan::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
+float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
 	// Gather tags from source and target
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();

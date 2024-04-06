@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameplayModMagnitudeCalculation.h"
-#include "MMC_MaxMan.generated.h"
+#include "MMC_MaxMana.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AURA_API UMMC_MaxMan : public UGameplayModMagnitudeCalculation
+class AURA_API UMMC_MaxMana : public UGameplayModMagnitudeCalculation
 {
 	GENERATED_BODY()
 public:
-	UMMC_MaxMan();
+	UMMC_MaxMana();
 
 	virtual float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const override;
 
