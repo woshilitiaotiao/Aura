@@ -10,9 +10,12 @@
 UENUM(BlueprintType)
 enum class ECharacterClass : uint8
 {
-	Elementalist,	//法师
-	Warrior,		//战士
-	Ranger			//游侠
+	//法师
+	Elementalist,
+	//战士
+	Warrior,
+	//游侠
+	Ranger			
 };
 
 USTRUCT(BlueprintType)
@@ -33,6 +36,7 @@ class AURA_API UCharacterClassInfo : public UDataAsset
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Defaults")
 	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassInformation;
 	
@@ -42,5 +46,11 @@ class AURA_API UCharacterClassInfo : public UDataAsset
 	UPROPERTY(EditDefaultsOnly, Category = "Common Class Defaults")
 	TSubclassOf<UGameplayEffect> VitalAttributes;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Character Class Defaults")
+	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Character Class Defaults")
+	TObjectPtr<UCurveTable> DamageCalculationCoefficients;
+	
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);
 };

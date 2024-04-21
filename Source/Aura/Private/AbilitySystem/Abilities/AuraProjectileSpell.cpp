@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -40,9 +41,25 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargretLocat
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		//TODO: Give the Projectile a Gameplay Effect Spec for Causing Damage
-
 		const UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-		const FGameplayEffectSpecHandle GameplayEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), AbilitySystemComponent->MakeEffectContext());
+		FGameplayEffectContextHandle GameplayEffectContextHandle = AbilitySystemComponent->MakeEffectContext();
+		GameplayEffectContextHandle.SetAbility(this);
+		GameplayEffectContextHandle.AddSourceObject(Projectile);
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(Projectile);
+		GameplayEffectContextHandle.AddActors(Actors);
+		FHitResult HitResult;
+		HitResult.Location = ProjectileTargretLocation;
+		GameplayEffectContextHandle.AddHitResult(HitResult);
+		
+		const FGameplayEffectSpecHandle GameplayEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), GameplayEffectContextHandle);
+		
+		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+
+		const float ScaledDamage = Damage.GetValueAtLevel(1);
+		
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GameplayEffectSpecHandle, GameplayTags.Damage, ScaledDamage);
+		
 		Projectile->DamageEffectSpecHandle = GameplayEffectSpecHandle;
 		
 		Projectile->FinishSpawning(SpawnTransform);
