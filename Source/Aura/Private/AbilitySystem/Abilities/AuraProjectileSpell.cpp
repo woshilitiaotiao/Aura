@@ -28,7 +28,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargretLocat
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
 		FRotator Rotation = (ProjectileTargretLocation - SocketLocation).Rotation();
-		Rotation.Pitch = 0;
+		//Rotation.Pitch = 0;
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
 		SpawnTransform.SetRotation(Rotation.Quaternion());
@@ -56,9 +56,11 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargretLocat
 		
 		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 
-		const float ScaledDamage = Damage.GetValueAtLevel(1);
-		
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GameplayEffectSpecHandle, GameplayTags.Damage, ScaledDamage);
+		for(auto& Pair : DamageType)
+		{
+			const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GameplayEffectSpecHandle, Pair.Key, ScaledDamage);
+		}
 		
 		Projectile->DamageEffectSpecHandle = GameplayEffectSpecHandle;
 		

@@ -46,7 +46,6 @@ UAttributeWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidgetCon
 void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
 {
 	AActor* Avatar = ASC->GetAvatarActor();
-	
 	UCharacterClassInfo* ClassInfo = GetCharacterClassInfo(WorldContextObject);
 	
 	const FCharacterClassDefaultInfo ClassDefaultInfo = ClassInfo->GetClassDefaultInfo(CharacterClass);
@@ -55,6 +54,11 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	PrimaryGameplayEffectContextHandle.AddSourceObject(Avatar);
 	const FGameplayEffectSpecHandle PrimaryGameplayEffectSpecHandle = ASC->MakeOutgoingSpec(ClassDefaultInfo.PrimaryAttributes, Level,PrimaryGameplayEffectContextHandle );
 	ASC->ApplyGameplayEffectSpecToSelf(*PrimaryGameplayEffectSpecHandle.Data.Get());
+
+	FGameplayEffectContextHandle ResistanceGameplayEffectContextHandle = ASC->MakeEffectContext();
+	ResistanceGameplayEffectContextHandle.AddSourceObject(Avatar);
+	const FGameplayEffectSpecHandle ResistanceGameplayEffectSpecHandle = ASC->MakeOutgoingSpec(ClassDefaultInfo.ResistanceAttributes, Level,ResistanceGameplayEffectContextHandle );
+	ASC->ApplyGameplayEffectSpecToSelf(*ResistanceGameplayEffectSpecHandle.Data.Get());
 
 	FGameplayEffectContextHandle SecondaryEffectContextHandle = ASC->MakeEffectContext();
 	SecondaryEffectContextHandle.AddSourceObject(Avatar);
