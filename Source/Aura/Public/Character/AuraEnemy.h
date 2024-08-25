@@ -30,6 +30,9 @@ public:
 
 	/* Combat Interface */
 	virtual int32 GetPlayerLevel() override;
+	virtual void Die() override;
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+	virtual AActor* GetCombatTarget_Implementation() const override;
 	/* end Combat Interface */
 
 	UPROPERTY(BlueprintAssignable)
@@ -44,7 +47,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
-	void HirReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(BlueprintReadOnly, Category="Combat")
 	bool bHitReacting = false;
@@ -55,7 +58,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Combat")
 	float LifeSpawn = 5.f;
 
-	virtual void Die() override;
+	UPROPERTY(BlueprintReadWrite, Category="Combat")
+	TObjectPtr<AActor> CombatTarget;
 	
 protected:
 	virtual void BeginPlay() override;
