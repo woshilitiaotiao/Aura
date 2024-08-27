@@ -4,6 +4,7 @@
 #include "Character/AuraCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -37,6 +38,11 @@ void AAuraCharacterBase::Die()
 	MulticastHandleDeath();
 }
 
+TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	Weapon->SetSimulatePhysics(true);
@@ -64,10 +70,22 @@ void AAuraCharacterBase::InitAbilityActorInfo()
 {
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	check(Weapon);
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon) && IsValid(Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponTipSocketName);
+	}
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftSocketSocketName);
+	}
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightSocketSocketName);
+	}
+	return FVector();
 }
 
 bool AAuraCharacterBase::IsDead_Implementation() const
@@ -108,13 +126,18 @@ void AAuraCharacterBase::AddCharacterAbilities()
 
 void AAuraCharacterBase::Disslove()
 {
-	if(IsValid(DissolveMaterialInstance) && IsValid(WeaponDissolveMaterialInstance))
+	if(IsValid(DissolveMaterialInstance))
 	{
 		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
 		GetMesh()->SetMaterial(0, DynamicMatInst);
+		
+		StartDissolveTimeLine(DynamicMatInst);
+	}
+	if(IsValid(WeaponDissolveMaterialInstance))
+	{
 		UMaterialInstanceDynamic* WeaponDynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
 		Weapon->SetMaterial(0, WeaponDynamicMatInst);
 		
-		StartDissolveTimeLine(DynamicMatInst, WeaponDynamicMatInst);
+		StartWeaponDissolveTimeLine(WeaponDynamicMatInst);
 	}
 }

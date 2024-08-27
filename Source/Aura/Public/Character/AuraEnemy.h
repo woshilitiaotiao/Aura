@@ -52,10 +52,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Combat")
 	bool bHitReacting = false;
 
-	UPROPERTY(BlueprintReadOnly, Category="Combat")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat")
 	float BaseWalkSpeed = 250.f;
 	
-	UPROPERTY(BlueprintReadOnly, Category="Combat")
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category="Combat")
 	float LifeSpawn = 5.f;
 
 	UPROPERTY(BlueprintReadWrite, Category="Combat")
